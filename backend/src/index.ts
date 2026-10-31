@@ -5,7 +5,7 @@ import cors from "cors";
 import fs from "node:fs";
 import path from "node:path";
 
-import * as Sentry from "@sentry/node";
+// import * as Sentry from "@sentry/node";
 
 import { clerkMiddleware } from "@clerk/express";
 import { clerkWebhookHandler } from "./webhooks/clerk";
