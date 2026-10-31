@@ -10,7 +10,7 @@ import path from "node:path";
 import { clerkMiddleware } from "@clerk/express";
 import { clerkWebhookHandler } from "./webhooks/clerk";
 import { getEnv } from "./lib/env";
-// import keepAliveCron from "./lib/cron";
+import keepAliveCron from "./lib/cron";
 
 // import productRouter from "./routes/productRouter";
 // import meRouter from "./routes/meRouter";
@@ -40,9 +40,9 @@ app.use(cors());
 app.use(clerkMiddleware());
 // app.use(sentryClerkUserMiddleware);
 
-// app.get("/health", (_req, res) => {
-//   res.json({ ok: true });
-// });
+app.get("/health", (_req, res) => {
+  res.json({ ok: true });
+});
 
 // app.use("/api/me", meRouter);
 // app.use("/api/products", productRouter);
@@ -86,7 +86,7 @@ if (fs.existsSync(publicDir)) {
 
 app.listen(env.PORT, () => {
   console.log("Listening on port:", env.PORT);
-  // if (env.NODE_ENV === "production") {
-  //   keepAliveCron.start();
-  // }
+  if (env.NODE_ENV === "production") {
+    keepAliveCron.start();
+  }
 });
