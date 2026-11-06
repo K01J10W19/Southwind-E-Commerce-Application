@@ -1,10 +1,11 @@
 import { Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/react'
 import PageLoader from './components/PageLoader';
 import Layout from './components/Layout';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
+import CheckoutReturnPage from './pages/CheckoutReturnPage';
 
 function App() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout/return" element={<CheckoutReturnPage />} />
           <Route
             path="/orders"
             element={isSignedIn ? <OrdersPage /> : <Navigate to={"/"} replace />}

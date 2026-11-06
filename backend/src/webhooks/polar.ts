@@ -3,7 +3,16 @@ import { getEnv } from "../lib/env.js";
 import { checkoutSessions, orderItems, orders } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { Webhook } from "standardwebhooks";
+import { Webhook, WebhookVerificationError } from "standardwebhooks";
+
+// Newer Polar secrets ("whsec_<base64>") are already in Standard Webhooks format,
+// so pass them through untouched. Legacy secrets (e.g. "polar_whs_...") are raw strings
+// that Polar signs with directly, so they must be base64-encoded first.
+function webhookFromSecret(secret: string) {
+    const trimmed = secret.trim();
+    if (trimmed.startsWith("whsec_")) return new Webhook(trimmed);
+    return new Webhook(Buffer.from(trimmed, "utf8").toString("base64"));
+}
 
 function headerString(headers: Request["headers"], name: string) {
     const value = headers[name];
@@ -89,7 +98,7 @@ export async function polarWebhookHandler(req: Request, res: Response) {
         }
 
         const raw = req.body instanceof Buffer ? req.body : Buffer.from(String(req.body));
-        const wh = new Webhook(Buffer.from(env.POLAR_WEBHOOK_SECRET, "utf8").toString("base64"));
+        const wh = webhookFromSecret(env.POLAR_WEBHOOK_SECRET);
 
         const id = headerString(req.headers, "webhook-id");
         const ts = headerString(req.headers, "webhook-timestamp");
@@ -145,6 +154,12 @@ export async function polarWebhookHandler(req: Request, res: Response) {
         res.json({ ok: true });
     } catch (err) {
         console.error("Polar webhook error", err);
-        res.status(400).json({ error: "Invalid webhook" });
+        if (err instanceof WebhookVerificationError || err instanceof SyntaxError) {
+            // bad signature / payload: Polar should not retry
+            res.status(400).json({ error: "Invalid webhook" });
+            return;
+        }
+        // DB or other server-side failure: return 5xx so Polar retries the delivery
+        res.status(500).json({ error: "Webhook processing failed" });
     }
 }
