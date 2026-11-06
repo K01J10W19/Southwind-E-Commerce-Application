@@ -10,6 +10,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import OrderSummaryPage from './pages/OrderSummaryPage';
 import OrderChatPage from './pages/OrderChatPage';
+import SentryDemoPage from './pages/SentryDemoPage';
 
 function App() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -27,6 +28,7 @@ function App() {
             path="/orders"
             element={isSignedIn ? <OrdersPage /> : <Navigate to={"/"} replace />}
           />
+          <Route path="/demo-sentry" element={<SentryDemoPage />} />
 
           {/* NESTED ROUTES */}
           <Route path="/orders/:id" element={<OrderDetailPage />}>

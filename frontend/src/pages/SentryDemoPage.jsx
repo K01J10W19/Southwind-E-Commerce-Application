@@ -293,7 +293,7 @@ function sendErrorBatch() {
     });
 }
 
-export function SentryDemoPage() {
+export default function SentryDemoPage() {
     const [lastAction, setLastAction] = useState(null);
 
     const run = useCallback((id, fn) => {
