@@ -93,10 +93,10 @@ function sendInsufficientStockError() {
         level: "info",
     });
     Sentry.logger.info(
-        "Inventory: reserving SKU NW-KEY-01",
+        "Inventory: reserving SKU SW-KEY-01",
         logDemo({
         area: "inventory",
-        sku: "NW-KEY-01",
+        sku: "SW-KEY-01",
         requested: 2,
         }),
     );
@@ -104,7 +104,7 @@ function sendInsufficientStockError() {
         "Reservation failed: insufficient on-hand quantity",
         logDemo({
         area: "inventory",
-        sku: "NW-KEY-01",
+        sku: "SW-KEY-01",
         requested: 2,
         available: 0,
         warehouse: "US-WEST-1",
@@ -113,15 +113,15 @@ function sendInsufficientStockError() {
     Sentry.withScope((scope) => {
         applyDemoScope(scope, "insufficient_stock");
         scope.setTag("area", "inventory");
-        scope.setTag("sku", "NW-KEY-01");
+        scope.setTag("sku", "SW-KEY-01");
         scope.setContext("inventory", {
-        sku: "NW-KEY-01",
+        sku: "SW-KEY-01",
         requested: 2,
         available: 0,
         warehouse: "US-WEST-1",
         });
         Sentry.captureException(
-        new Error("Cannot reserve inventory: insufficient quantity for SKU NW-KEY-01."),
+        new Error("Cannot reserve inventory: insufficient quantity for SKU SW-KEY-01."),
         );
     });
 }
@@ -257,7 +257,7 @@ function sendRateLimitWarning() {
         "API gateway: tenant over public rate limit",
         logDemo({
         area: "api",
-        tenantId: "org_demo_northwind",
+        tenantId: "org_demo_southwind",
         limitPerMinute: 120,
         retryAfterSec: 34,
         }),
@@ -268,13 +268,13 @@ function sendRateLimitWarning() {
         scope.setTag("area", "api");
         scope.setLevel("warning");
         scope.setContext("rate_limit", {
-        tenantId: "org_demo_northwind",
+        tenantId: "org_demo_southwind",
         limitPerMinute: 120,
         retryAfterSec: 34,
         });
 
         Sentry.captureMessage(
-        "Public catalog API rate limit exceeded for tenant org_demo_northwind.",
+        "Public catalog API rate limit exceeded for tenant org_demo_southwind.",
         "warning",
         );
     });

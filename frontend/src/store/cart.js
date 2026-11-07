@@ -37,6 +37,6 @@ export const useCart = create(
             set({ items: [] });
         },
         }),
-        { name: "northwind-cart" },
+        { name: "southwind-cart" },
     ),
 );

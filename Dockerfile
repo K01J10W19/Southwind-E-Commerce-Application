@@ -10,6 +10,9 @@ ENV VITE_API_URL=
 # Public Clerk key (safe to pass as build-arg; it is embedded in client JS anyway)
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+# Browser Sentry DSN (public; Vite inlines it at build time). Leave empty to disable.
+ARG VITE_SENTRY_DSN=
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
 RUN npm install --no-audit --no-fund \
   && npm run build
 
@@ -36,4 +39,5 @@ COPY --from=frontend-build /app/frontend/dist ./public
 EXPOSE 3001
 USER node
 
-CMD ["node", "dist/index.js"]
+# Preload Sentry before the app so it can instrument Express/http (SENTRY_DSN is read at runtime).
+CMD ["node", "--require", "./dist/instrument.js", "dist/index.js"]

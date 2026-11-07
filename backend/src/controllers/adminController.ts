@@ -54,7 +54,8 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
         }
         const user = await getLocalUser(userId);
 
-        if (!isAdmin(user.role)) {
+        // user may not exist yet if the Clerk webhook hasn't synced them
+        if (!user || !isAdmin(user.role)) {
         res.status(403).json({ error: "Admin only" });
         return;
         }

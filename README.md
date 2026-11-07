@@ -108,7 +108,7 @@ Southwind-E-Commerce-Application/
 │   │   └── seed.ts                   # Upserts 18 demo products across 7 categories
 │   └── src/
 │       ├── index.ts                  # Express app: webhooks, middleware, /api routers, SPA fallback
-│       ├── instrument.ts             # Sentry + profiling init (loaded with --import)
+│       ├── instrument.ts             # Sentry + profiling init, preloaded before the app
 │       ├── controllers/
 │       │   ├── adminController.ts    # requireAdmin guard, product CRUD, ImageKit auth params
 │       │   ├── checkoutController.ts # Server-side pricing + Polar checkout creation
@@ -260,7 +260,7 @@ Vite exposes only variables prefixed with `VITE_` to the browser, so none of the
 | --- | --- | --- |
 | `VITE_CLERK_PUBLISHABLE_KEY` | **Yes** | Clerk publishable key used by `<ClerkProvider>` |
 | `VITE_API_URL` | Yes in dev | API origin, e.g. `http://localhost:3001`. Leave empty to call `/api` on the same host (the Docker image builds with it empty) |
-| `VITE_SENTRY_DSN` | No | Browser Sentry DSN |
+| `VITE_SENTRY_DSN` | No | Browser Sentry DSN (pass as a `--build-arg` for the Docker image) |
 | `VITE_IMAGEKIT_URL_ENDPOINT` | No | Custom ImageKit endpoint, so URLs on it are optimized as well as the default `*.ik.imagekit.io` URLs |
 
 ```bash
@@ -275,7 +275,7 @@ VITE_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
 
 ### Prerequisites
 
-- **Node.js 22.18+** and npm. `npm start` loads `src/instrument.ts` directly, which relies on Node's built-in TypeScript type stripping. That feature is on by default from 22.18.
+- **Node.js 22 LTS** (latest 22.x recommended; the Docker image uses `node:22`) and npm
 - A **PostgreSQL** database (any hosted or local instance reachable through `DATABASE_URL`)
 - Accounts and keys for **Clerk**, **Polar**, **Stream** and **ImageKit**; **Sentry** is optional
 - For local webhooks: a public HTTPS URL that forwards to `http://localhost:3001`, so that Clerk and Polar can reach `/webhooks/clerk` and `/webhooks/polar`
@@ -357,10 +357,10 @@ cd frontend && npm run preview
 
 ### 8. (Optional) Build and run the Docker image
 
-The image bundles the SPA and the API into a single container on port `3001`. The Clerk publishable key is baked in at build time, and the server variables are supplied at runtime.
+The image bundles the SPA and the API into a single container on port `3001`. The Clerk publishable key and the browser Sentry DSN are baked in at build time. The server variables, including `SENTRY_DSN`, are supplied at runtime. The container preloads `dist/instrument.js` so that backend Sentry starts before Express.
 
 ```bash
-docker build --build-arg VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxx -t southwind .
+docker build --build-arg VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxx --build-arg VITE_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx -t southwind .
 ```
 
 ```bash

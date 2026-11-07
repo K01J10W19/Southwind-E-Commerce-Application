@@ -4,6 +4,7 @@ import { IK_PRESETS, imageKitOptimizedUrl } from "../lib/imagekitUrl.js";
 import { PackageIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { formatPrice } from "../utils/format.js";
 import { AdminProductForm } from "../components/AdminProductForm.jsx";
+import { Navigate } from "react-router";
 
 function AdminProductsPage() {
     const {

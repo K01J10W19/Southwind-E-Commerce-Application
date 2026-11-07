@@ -9,7 +9,7 @@ export default function Footer() {
                 <div>
                     <div className="flex items-center gap-2 font-semibold text-base-content">
                     <TruckIcon className="size-8 text-primary" aria-hidden />
-                    Northwind Supply
+                    Southwind Supply
                     </div>
                     <p className="mt-3 text-sm leading-relaxed text-base-content/65">
                     Curated hardware and workspace tools. Paid orders include priority support; chat with
@@ -23,7 +23,7 @@ export default function Footer() {
                     </h3>
                     <ul className="mt-3 space-y-2 text-sm">
                     <li>
-                        <Link to="/" className="link link-hover text-base-content/80">
+                        <Link to="/#catalog" className="link link-hover text-base-content/80">
                         All products
                         </Link>
                     </li>
@@ -65,7 +65,7 @@ export default function Footer() {
 
                 <div className="mt-10 space-y-4 border-t border-base-300 pt-6">
                 <p className="text-center text-xs text-base-content/50">
-                    © {new Date().getFullYear()} Northwind Supply · All prices in USD
+                    © {new Date().getFullYear()} Southwind Supply · All prices in USD
                 </p>
                 </div>
             </div>
